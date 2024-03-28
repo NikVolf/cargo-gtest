@@ -133,6 +133,8 @@ pub fn run_tests(ptr: *const u8) {
                 }
 
                 sessions::drop_session(&session_id).await;
+
+                msg::reply((), 0).expect("Failed to reply in test path");
             }
             ControlSignal::WrapExecute(session_id, test_index) => {
                 sessions::set_active_session(&session_id).await;
@@ -141,7 +143,7 @@ pub fn run_tests(ptr: *const u8) {
                 let test_future = extract_test_context(ptr, test_index);
                 test_future.into_future().await;
 
-                msg::reply((), 0).expect("Failed to reply");
+                msg::reply((), 0).expect("Failed to reply in wrap execute path");
             }
         };
     });
